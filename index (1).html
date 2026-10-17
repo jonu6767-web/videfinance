@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VibeFinance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--panel:#fff;--ink:#14202b;--mute:#5b6a78;--rule:#cfd7de;--blue:#1e4db7;
+--go:#1f7a4d;--go-bg:#e3f3ea;--hold:#8a5a00;--hold-bg:#fbefd2;--stop:#a8322a;--stop-bg:#f9e1de;--none:#5b6a78;--none-bg:#e4e9ee;
+font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:64px}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+header{background:var(--ink);color:#fff;padding:14px 20px}
+header h1{margin:0;font-size:18px;font-weight:600}
+header p{margin:2px 0 0;font-size:13px;color:#b8c4cf}
+main{max-width:1120px;margin:0 auto;padding:20px}
+.bar{display:flex;flex-wrap:wrap;gap:14px;align-items:end;background:var(--panel);border:1px solid var(--rule);padding:14px;border-radius:6px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+select{padding:8px 10px;border:1px solid var(--rule);border-radius:4px;background:#fff;min-width:230px;color:var(--ink)}
+.seg{display:flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.seg button{background:#fff;border:0;padding:8px 14px;cursor:pointer;border-right:1px solid var(--rule)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--blue);color:#fff}
+.go{background:var(--blue);color:#fff;border:0;border-radius:4px;padding:9px 20px;font-weight:600;cursor:pointer}
+.go:disabled{opacity:.55;cursor:wait}
+details.sim{font-size:13px;color:var(--mute)}
+details.sim label{margin-right:12px;color:var(--ink)}
+.note{font-size:13px;color:var(--mute);margin:10px 2px}
+.banner{margin:14px 0;padding:10px 14px;border-radius:4px;font-size:14px}
+.banner.warn{background:var(--hold-bg);color:var(--hold)}
+.banner.err{background:var(--stop-bg);color:var(--stop)}
+.banner.synth{background:var(--none-bg);color:var(--ink)}
+h2{font-size:15px;margin:26px 0 10px}
+.price{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.price svg{flex:1 1 320px;height:90px;width:100%}
+.price .big{font-size:28px;font-weight:600;line-height:1}
+.price .sub{font-size:13px;color:var(--mute)}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pc{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px;border-top:5px solid var(--rule);cursor:pointer;text-align:left;width:100%}
+.pc[aria-pressed=true]{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue) inset}
+.pc.go-t{border-top-color:var(--go)}.pc.hold-t{border-top-color:#c58a12}.pc.stop-t{border-top-color:var(--stop)}.pc.none-t{border-top-color:var(--none)}
+.pc .who{font-size:13px;color:var(--mute)}
+.pc .act{font-size:19px;font-weight:600;margin:4px 0 8px;line-height:1.25}
+.pc .meta{font-size:13px;color:var(--mute)}
+.meter{height:6px;background:var(--none-bg);border-radius:3px;margin:8px 0 4px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--blue)}
+.rec{background:var(--panel);border:1px solid var(--rule);border-left:5px solid var(--blue);border-radius:6px;padding:14px 16px;margin-top:12px;max-width:80ch}
+.agents{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ag{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px}
+.ag h3{margin:0 0 6px;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.pill{font-size:12px;padding:1px 8px;border-radius:10px;font-weight:600}
+.pill.OK{background:var(--go-bg);color:var(--go)}.pill.DEGRADED{background:var(--hold-bg);color:var(--hold)}.pill.UNAVAILABLE{background:var(--stop-bg);color:var(--stop)}
+.sig{font-size:17px;font-weight:600}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:13px;margin:8px 0}
+.kv dt{color:var(--mute)}.kv dd{margin:0}
+.ag p{font-size:13px;margin:8px 0 0;color:#2d3b48}
+.cites{display:grid;gap:8px}
+.cite{background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--go);border-radius:4px;padding:10px 12px;font-size:14px;max-width:90ch}
+.cite q{display:block;quotes:"“" "”"}
+.cite small{color:var(--mute)}
+.news{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px;max-width:90ch}
+.news li{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:8px 12px;display:flex;gap:10px;justify-content:space-between}
+.news a{color:var(--blue)}
+.tel{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:#dfe7ee;font-size:13px;padding:10px 20px;display:flex;flex-wrap:wrap;gap:6px 22px}
+.tel b{color:#fff}
+.empty{background:var(--panel);border:1px dashed var(--rule);border-radius:6px;padding:28px;text-align:center;color:var(--mute)}
+footer{font-size:12px;color:var(--mute);margin:26px 0 0}
+@media(max-width:820px){.cols,.agents{grid-template-columns:1fr}select{min-width:0;width:100%}.bar>*{flex:1 1 100%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>VibeFinance</h1>
+  <p>One stock, three risk profiles, every claim traced to its source.</p>
+</header>
+<main>
+  <div class="bar">
+    <label class="f">Stock<select id="stock" aria-label="Stock"></select></label>
+    <div class="f">Your risk profile
+      <div class="seg" role="group" aria-label="Risk profile" id="seg">
+        <button data-p="CONSERVATIVE" aria-pressed="false">Conservative</button>
+        <button data-p="MODERATE" aria-pressed="true">Moderate</button>
+        <button data-p="AGGRESSIVE" aria-pressed="false">Aggressive</button>
+      </div>
+    </div>
+    <button class="go" id="run">Analyze</button>
+    <details class="sim"><summary>Test a failure</summary>
+      <p>Switch an agent off to see how the system copes:</p>
+      <label><input type="checkbox" value="technical"> Technical</label>
+      <label><input type="checkbox" value="fundamental"> Fundamental</label>
+      <label><input type="checkbox" value="sentiment"> Sentiment</label>
+    </details>
+  </div>
+  <p class="note" id="status" role="status"></p>
+  <div id="out"><div class="empty">Choose a stock and select Analyze. The first run can take 15 seconds while the agents read prices, news and filings.</div></div>
+  <footer>Educational output, not investment advice. Prices come from Yahoo Finance, headlines from Google News, and filing excerpts from indexed documents.</footer>
+</main>
+<div class="tel" id="tel" aria-live="polite">No analysis yet.</div>
+
+<script>
+const CFG = {
+  url: "https://zjrkwrzdfgisppmqeotq.supabase.co",
+  key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqcmt3cnpkZmdpc3BwbXFlb3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NTM5MzMsImV4cCI6MjEwNzUyOTkzM30.vlz2PtvI1cZbMVSa6XDoD33iKI8QeXQWjHkzXNhuxcM" // public anon key: safe in the browser
+};
+const H = { apikey: CFG.key, Authorization: "Bearer " + CFG.key };
+const PROFILES = ["CONSERVATIVE", "MODERATE", "AGGRESSIVE"];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const human = (s) => { s = String(s || "").replace(/_/g, " ").toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); };
+const tone = (a) => /^(REDUCE|SELL|AVOID)/.test(a) ? "stop" : /^(HOLD|NO_DATA)/.test(a) ? (a === "NO_DATA" ? "none" : "hold") : "go";
+const state = { profile: "MODERATE", last: null, busy: false };
+
+function setStatus(msg) { $("status").textContent = msg || ""; }
+
+async function loadStocks() {
+  try {
+    const r = await fetch(CFG.url + "/rest/v1/stocks?select=symbol,name&order=symbol", { headers: H });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const rows = await r.json();
+    $("stock").innerHTML = rows.map((s) => `<option value="${esc(s.symbol)}">${esc(s.symbol)} · ${esc(s.name)}</option>`).join("");
+    if (rows.some((s) => s.symbol === "DEMOEV")) $("stock").value = "DEMOEV";
+  } catch (e) {
+    setStatus("Could not load the stock list (" + e.message + "). Check your connection and reload.");
+  }
+}
+
+async function loadPrices(sym) {
+  const r = await fetch(`${CFG.url}/rest/v1/price_history?symbol=eq.${encodeURIComponent(sym)}&select=trade_date,close&order=trade_date.desc&limit=120`, { headers: H });
+  if (!r.ok) return [];
+  return (await r.json()).reverse().map((x) => ({ d: x.trade_date, c: Number(x.close) }));
+}
+
+function spark(p) {
+  if (p.length < 2) return "";
+  const w = 600, h = 90, lo = Math.min(...p.map((x) => x.c)), hi = Math.max(...p.map((x) => x.c)), span = hi - lo || 1;
+  const pts = p.map((x, i) => `${(i / (p.length - 1) * w).toFixed(1)},${(h - 6 - (x.c - lo) / span * (h - 12)).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Closing price, last ${p.length} trading days"><polyline points="${pts}" fill="none" stroke="#1e4db7" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+async function analyze() {
+  if (state.busy) return;
+  const symbol = $("stock").value;
+  if (!symbol) return;
+  const sim = [...document.querySelectorAll(".sim input:checked")].map((i) => i.value);
+  state.busy = true; $("run").disabled = true;
+  setStatus("Running the agents for " + symbol + "…");
+  try {
+    const [res, prices] = await Promise.all([
+      fetch(CFG.url + "/functions/v1/synthesis", { method: "POST", headers: { ...H, "Content-Type": "application/json" }, body: JSON.stringify({ symbol, risk_profile: "ALL", simulate_failure: sim }) }),
+      loadPrices(symbol).catch(() => []),
+    ]);
+    if (!res.ok) throw new Error("the analysis service returned HTTP " + res.status);
+    state.last = await res.json();
+    state.prices = prices; state.symbol = symbol;
+    state.synthetic = /SYNTHETIC/i.test($("stock").selectedOptions[0].text);
+    setStatus("");
+    render();
+  } catch (e) {
+    setStatus("");
+    $("out").innerHTML = `<div class="banner err">The analysis could not be completed: ${esc(e.message)}. Try again in a moment.</div>`;
+  } finally { state.busy = false; $("run").disabled = false; }
+}
+
+const pill = (s) => `<span class="pill ${esc(s)}">${esc(s)}</span>`;
+const pct = (x) => (typeof x === "number" ? Math.round(x * 100) + "%" : "n/a");
+
+function agentCard(title, a, body) {
+  a = a || { status: "UNAVAILABLE" };
+  const dead = a.status === "UNAVAILABLE";
+  return `<section class="ag"><h3>${title}${pill(a.status)}</h3>` +
+    (dead ? `<div class="sig" style="color:var(--stop)">Unavailable</div><p>${esc(a.error || a.reasoning_summary || "No response.")}</p>`
+          : `<div class="sig">${esc(human(a.signal_classification))}</div><div class="kv"><dt>Confidence</dt><dd>${pct(a.confidence_score)}</dd><dt>Latency</dt><dd>${esc(a.latency_ms)} ms</dd>${body}</div><p>${esc(a.reasoning_summary)}</p>`) +
+    `</section>`;
+}
+
+function render() {
+  const L = state.last, sel = L.results[state.profile], P = state.prices || [];
+  const t = L.agents.technical, f = L.agents.fundamental, s = L.agents.sentiment;
+  const last = P[P.length - 1], prev = P[P.length - 2];
+  const chg = last && prev ? (last.c / prev.c - 1) * 100 : null;
+  let html = "";
+  if (state.synthetic) html += `<div class="banner synth">This is a fictional company with synthetic prices, headlines and filings, built to demonstrate the pipeline. Nothing here describes a real business.</div>`;
+  if (sel.system_telemetry.degraded_state) {
+    const miss = sel.system_telemetry.missing_agents.join(", ");
+    html += `<div class="banner warn">Reduced confidence: ${esc(miss || "an agent")} did not respond, so this advice rests on ${sel.system_telemetry.agents_responding} of 3 agents.</div>`;
+  }
+  html += `<h2>${esc(L.asset_symbol)} price, last ${P.length} trading days</h2><div class="price">${spark(P)}<div><div class="big">${last ? last.c.toFixed(2) : "n/a"}</div><div class="sub">${chg === null ? "" : (chg >= 0 ? "+" : "") + chg.toFixed(2) + "% on the day · " + esc(last.d)}</div></div></div>`;
+
+  html += `<h2>Same signals, three different answers</h2><div class="cols">` + PROFILES.map((p) => {
+    const r = L.results[p], tn = tone(r.composite_signal), size = r.position_size_range_pct;
+    return `<button class="pc ${tn}-t" data-p="${p}" aria-pressed="${p === state.profile}"><div class="who">${human(p)}</div><div class="act">${esc(human(r.composite_signal))}</div>` +
+      `<div class="meter" title="Confidence"><i style="width:${Math.round(r.composite_confidence * 100)}%"></i></div><div class="meta">Confidence ${pct(r.composite_confidence)}</div>` +
+      `<div class="meta">${size ? "Entry size " + size[0] + "–" + size[1] + "% of the planned amount" : "No new entry suggested"}${r.stop_loss_pct ? " · stop-loss ~" + r.stop_loss_pct + "%" : ""}</div></button>`;
+  }).join("") + `</div>`;
+  html += `<div class="rec"><strong>${human(state.profile)} profile</strong><br>${esc(sel.personalized_recommendation)}${sel.conflict ? `<br><em>${esc(sel.conflict)}</em>` : ""}</div>`;
+
+  const ki = (t && t.key_indicators) || {}, fm = (f && f.key_metrics) || {}, sc = (s && s.catalysts) || [];
+  html += `<h2>What each agent found</h2><div class="agents">` +
+    agentCard("Technical", t, `<dt>RSI (14)</dt><dd>${esc(ki.rsi_14)}</dd><dt>SMA 20 vs 50</dt><dd>${esc(human(ki.sma_20_vs_50))}</dd><dt>Volume vs 20-day avg</dt><dd>${esc(ki.volume_ratio)}× (z ${esc(ki.volume_z_score)})</dd>`) +
+    agentCard("Fundamental", f, `<dt>Revenue growth</dt><dd>${esc(fm.yoy_revenue_growth || "n/a")}</dd><dt>EBITDA margin</dt><dd>${esc(fm.ebitda_margin_change || "n/a")}</dd><dt>Net debt</dt><dd>${esc(human(fm.net_debt_trend || "n/a"))}</dd><dt>Source check</dt><dd>${f && f.grounding ? esc(f.grounding.claims_verified_against_source + " of " + f.grounding.claims_made + " claims match the filing") : "n/a"}</dd>`) +
+    agentCard("Sentiment", s, `<dt>Score</dt><dd>${esc(s && s.sentiment_score)}</dd><dt>Headlines read</dt><dd>${esc(s && s.news_items_analyzed)}</dd><dt>Main catalysts</dt><dd>${sc.length ? esc(sc.map((c) => human(c.type) + " (" + c.count + ")").join(", ")) : "none"}</dd>`) +
+    `</div>`;
+
+  const cites = (f && f.citations) || [];
+  html += `<h2>Sources behind the fundamental view</h2>` + (cites.length
+    ? `<div class="cites">${cites.map((c) => `<div class="cite"><q>${esc(c.exact_excerpt)}</q><small>${esc(c.document_title)} · ${esc(c.section_header || "no section")} · page ${esc(c.page_number ?? "?")}</small></div>`).join("")}</div>`
+    : `<div class="empty">${esc((f && (f.reasoning_summary || f.error)) || "No filing excerpts are available for this stock.")}</div>`);
+
+  const heads = (s && s.headlines) || [];
+  if (heads.length) html += `<h2>Headlines that moved the sentiment score</h2><ul class="news">${heads.map((h) => `<li><span>${/^https?:\/\//.test(h.url || "") && !/example\.invalid/.test(h.url) ? `<a href="${esc(h.url)}" target="_blank" rel="noopener noreferrer">${esc(h.headline)}</a>` : esc(h.headline)}<br><small>${esc(h.source || "")}</small></span><b>${h.sentiment > 0 ? "+" : ""}${esc(h.sentiment)}</b></li>`).join("")}</ul>`;
+
+  $("out").innerHTML = html;
+
+  const tel = sel.system_telemetry, st = L.agent_status || sel.agent_status || {};
+  $("tel").innerHTML = `<span><b>${tel.total_execution_latency_ms} ms</b> total</span><span><b>${tel.agents_responding}/3</b> agents responding</span>` +
+    ["technical", "fundamental", "sentiment"].map((k) => { const a = (sel.agent_status || {})[k] || {}; return `<span>${human(k)}: <b>${esc(a.status || "?")}</b>${a.latency_ms != null ? " " + a.latency_ms + " ms" : ""}</span>`; }).join("") +
+    `<span>${tel.degraded_state ? "<b>Degraded</b>" : "<b>Healthy</b>"}</span><span>Run ${esc(String(L.run_id).slice(0, 8))}</span>`;
+}
+
+function setProfile(p) {
+  state.profile = p;
+  document.querySelectorAll("#seg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.p === p)));
+  if (state.last) render();
+}
+$("seg").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) setProfile(b.dataset.p); });
+$("out").addEventListener("click", (e) => { const b = e.target.closest(".pc"); if (b) setProfile(b.dataset.p); });
+$("run").addEventListener("click", analyze);
+loadStocks();
+</script>
+</body>
+</html>
